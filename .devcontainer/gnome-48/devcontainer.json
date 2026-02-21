@@ -1,0 +1,79 @@
+{
+    "name": "GNOME 48",
+    "build": {
+        "dockerfile": "../Dockerfile",
+        "args": {
+            "FEDORA_VERSION": "42"
+        }
+    },
+    "runArgs": [
+        "--network=host",
+        "--privileged",
+        "--device=/dev/input",
+        "--device=/dev/uinput",
+        "--device=/dev/dri",
+        "--volume=/run/udev:/run/udev:ro",
+        "--cap-add=SYS_ADMIN",
+        "--cap-add=SYS_RAWIO",
+        "--cap-add=SYS_PTRACE",
+        "--security-opt=seccomp=unconfined",
+        "--security-opt=apparmor:unconfined",
+        "--tmpfs", "/run",
+        "--tmpfs", "/tmp"
+    ],
+    "features": {
+        "ghcr.io/devcontainers/features/common-utils": {
+            "installZsh": "true",
+            "username": "vscode",
+            "userUid": "1000",
+            "userGid": "1000",
+            "upgradePackages": "true"
+        }
+    },
+    "mounts": [
+        {
+            "type": "bind",
+            "source": "/tmp/.X11-unix",
+            "target": "/tmp/.X11-unix"
+        },
+        {
+            "type": "bind",
+            "source": "/run/dbus/system_bus_socket",
+            "target": "/run/dbus/system_bus_socket"
+        },
+        {
+            "type": "bind",
+            "source": "/run/user/1000/bus",
+            "target": "/run/user/1000/bus"
+        },
+                {
+            "source": "${localEnv:XAUTHORITY}",
+            "target": "/home/vscode/.Xauthority",
+            "type": "bind"
+        },
+        {
+            "source": "/run/user/1000/dconf",
+            "target": "/run/user/1000/dconf",
+            "type": "bind"
+        },
+        {
+            "source": "${localWorkspaceFolder}",
+            "target": "/home/vscode/.local/share/gnome-shell/extensions/olympic-schedule@sydro.github.com",
+            "type": "bind"
+        }
+    ],
+    "remoteUser": "vscode",
+    "remoteEnv": {
+        "DISPLAY": "${localEnv:DISPLAY}",
+        "XDG_RUNTIME_DIR": "/run/user/1000",
+        "XAUTHORITY": "/home/vscode/.Xauthority"
+    },
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"carlos-algms.make-task-provider"
+			]
+		}
+	},
+    "postCreateCommand": "sudo mkdir -p /run/user/1000 && sudo chown -R vscode:vscode /run/user/1000"
+}
